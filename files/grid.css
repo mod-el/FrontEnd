@@ -89,6 +89,17 @@ img{
 .text-right{ text-align: right; }
 .text-justify{ text-align: justify; }
 
+.loading-gif{
+	animation-name: loadinggif;
+	animation-duration: 1.2s;
+}
+
+@keyframes loadinggif {
+	0% {opacity:0}
+	70% {opacity:0}
+	100% {opacity:1}
+}
+
 .pad1{ padding: 1px; } .pad1o{ padding-left: 1px; padding-right: 1px; } .pad1v{ padding-top: 1px; padding-bottom: 1px; }
 .pad2{ padding: 2px; } .pad2o{ padding-left: 2px; padding-right: 2px; } .pad2v{ padding-top: 2px; padding-bottom: 2px; }
 .pad5{ padding: 5px; } .pad5o{ padding-left: 5px; padding-right: 5px; } .pad5v{ padding-top: 5px; padding-bottom: 5px; }

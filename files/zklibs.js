@@ -482,7 +482,7 @@ Element.prototype.addClass = function(name){
 }
 
 function loading(cont){
-	cont.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" />';
+	cont.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 }
 
 function setCookie(name,value,days) {
@@ -509,7 +509,6 @@ function getCookie(name) {
 function deleteCookie(name) {
 	setCookie(name,"",-1);
 }
-
 
 /**************************** BACKWARD COMPATIBILITY **************************/
 
