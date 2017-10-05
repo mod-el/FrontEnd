@@ -41,7 +41,7 @@ function ajax(url, get, post, options){
 }
 
 Element.prototype.ajax = function(url, get, post, options){
-	ajax(url, get, post, options).then((function(el){
+	return ajax(url, get, post, options).then((function(el){
 		return function(r){
 			el.innerHTML = r;
 			return r;
