@@ -1,7 +1,7 @@
 /******************************************************************/
 /***************** AJAX FUNCTIONS *****************/
 
-function ajax(handler, url, get, post, options){
+function ajax(url, get, post, options){
 	options = array_merge({
 		'additional': [],
 		'bind': true,
@@ -31,34 +31,23 @@ function ajax(handler, url, get, post, options){
 			if(!options['fullResponse'])
 				text = handleAjaxResponse(text);
 
-			if(handler){
-				if(typeof handler==='object' && handler.nodeType && handler.nodeType===1){
-					jsFill(text, handler);
-				}else{
-					return handler.call(this, text);
-				}
-			}else{
-				return text;
-			}
+			return text;
 		});
 	}else{
 		return new Promise(function(resolve){
-			oldAjax((function(handler, resolve){
-				return function(r){
-					if(handler){
-						if(typeof handler==='object' && handler.nodeType && handler.nodeType===1){
-							jsFill(r, handler);
-						}else{
-							handler.call(this, r);
-						}
-					}
-
-					resolve(r);
-				}
-			})(handler, resolve), url, get, post, options['additional'], options['bind'], options['onprogress']);
+			oldAjax(resolve, url, get, post, options['additional'], options['bind'], options['onprogress']);
 		});
 	}
 }
+
+Element.prototype.ajax = function(url, get, post, options){
+	ajax(url, get, post, options).then((function(el){
+		return function(r){
+			el.innerHTML = r;
+			return r;
+		};
+	})(this));
+};
 
 function getElementBindingsForAjax(){
 	var bindings = {
