@@ -472,6 +472,7 @@ Element.prototype.addClass = function(name){
 
 function loading(cont){
 	cont.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" class="loading-gif" />';
+	return cont;
 }
 
 function setCookie(name,value,days) {
