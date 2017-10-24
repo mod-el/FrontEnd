@@ -383,14 +383,11 @@ function splitScripts(text) {
 		return '';
 	});
 	return {'html':cleaned, 'js':scripts};
-};
+}
 
-function jsFill(text, obj){
+Element.prototype.jsFill = function(text){
 	var split = splitScripts(text);
-	if(typeof obj!='object' && _(obj))
-		obj = _(obj);
-	if(obj)
-		obj.innerHTML = split.html;
+	this.innerHTML = split.html;
 	eval(split.js);
 }
 
@@ -470,9 +467,9 @@ Element.prototype.addClass = function(name){
 	this.className = this.className+' '+name;
 }
 
-function loading(cont){
-	cont.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" class="loading-gif" />';
-	return cont;
+Element.prototype.loading = function(){
+	this.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" class="loading-gif" />';
+	return this;
 }
 
 function setCookie(name,value,days) {
