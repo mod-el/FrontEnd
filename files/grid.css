@@ -70,7 +70,6 @@ img{
 .grid .w5d3{ width: 60%; }
 .grid .w5d4{ width: 80%; }
 
-.overflow{ overflow: hidden; } /* To remove ASAP */
 .no-overflow{ overflow: hidden; }
 .left{ float: left; }
 .right{ float: right; }
