@@ -9,8 +9,15 @@ function ajax(url, get, post, options){
 		'onprogress': null
 	}, options);
 
+	if(typeof get==='undefined')
+		get = '';
 	if(typeof post==='undefined')
 		post = null;
+
+	if(typeof get==='object')
+		get = queryStringFromObject(get);
+	if(typeof post==='object')
+		post = queryStringFromObject(post);
 
 	if(window.fetch && options['onprogress']===null){
 		var options = {
@@ -38,6 +45,14 @@ function ajax(url, get, post, options){
 			oldAjax(resolve, url, get, post, options['additional'], options['bind'], options['onprogress']);
 		});
 	}
+}
+
+function queryStringFromObject(obj){
+	var string = [];
+	for(var k in obj){
+		string.push(k+'='+encodeURIComponent(obj[k]));
+	}
+	return string.join('&');
 }
 
 Element.prototype.ajax = function(url, get, post, options){
