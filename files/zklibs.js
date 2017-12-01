@@ -513,7 +513,6 @@ function deleteCookie(name) {
 }
 
 var observingMutations = {};
-var afterMutation = null;
 function observeMutations(func, priority){
 	if(typeof priority==='undefined')
 		priority = 0;
@@ -524,6 +523,18 @@ function observeMutations(func, priority){
 	observingMutations[priority].push(func);
 
 	func.call(window);
+}
+
+var afterMutationArr = [];
+function afterMutation(func){
+	return new Promise(function(resolve){
+		afterMutationArr.push((function(resolve, func){
+			return function(){
+				func.call(window);
+				resolve();
+			};
+		})(resolve, func));
+	});
 }
 
 window.addEventListener('load', function(){
@@ -542,12 +553,12 @@ window.addEventListener('load', function(){
 					return Promise.all(promises);
 				});
 			});
-			if (afterMutation) {
-				lastPromise.then(function () {
-					afterMutation.call(window);
-					afterMutation = null;
-				});
-			}
+			afterMutationArr.forEach(function(afterMutationFunc){
+				lastPromise = lastPromise.then(afterMutationFunc);
+			});
+			lastPromise.then(function(){
+				afterMutationArr = [];
+			});
 		});
 		observer.observe(document.body, {"childList": true, "subtree": true});
 	}
