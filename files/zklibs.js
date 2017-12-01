@@ -512,6 +512,47 @@ function deleteCookie(name) {
 	setCookie(name,"",-1);
 }
 
+var observingMutations = {};
+var afterMutation = null;
+function observeMutations(func, priority){
+	if(typeof priority==='undefined')
+		priority = 0;
+
+	if(typeof observingMutations[priority]==='undefined')
+		observingMutations[priority] = [];
+
+	observingMutations[priority].push(func);
+
+	func.call(window);
+}
+
+window.addEventListener('load', function(){
+	if (typeof MutationObserver !== 'undefined') {
+		var observer = new MutationObserver(function (mutations) {
+			var lastPromise = Promise.all([]);
+			var keys = Object.keys(observingMutations);
+			keys.sort().forEach(function (k) {
+				var promises = [];
+				observingMutations[k].forEach(function (func) {
+					promises.push(new Promise(function (resolve) {
+						func.call(window).then(resolve);
+					}));
+				});
+				lastPromise = lastPromise.then(function () {
+					return Promise.all(promises);
+				});
+			});
+			if (afterMutation) {
+				lastPromise.then(function () {
+					afterMutation.call(window);
+					afterMutation = null;
+				});
+			}
+		});
+		observer.observe(document.body, {"childList": true, "subtree": true});
+	}
+});
+
 /**************************** BACKWARD COMPATIBILITY **************************/
 
 var infoDebugJSON = [];
