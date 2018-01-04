@@ -121,7 +121,7 @@ img{
 
 @media screen and (max-width: 799px){
 	.only-desktop{
-		display: none;
+		display: none !important;
 	}
 
 	.grid *.mw05{ width: calc((100% / 24) - 0.1px); }
@@ -161,6 +161,6 @@ img{
 
 @media screen and (min-width: 800px){
 	.only-mobile{
-		display: none;
+		display: none !important;
 	}
 }
