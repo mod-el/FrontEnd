@@ -326,7 +326,7 @@ function checkCampo(campo, mancanti, colora){
 	if(typeof campo=='undefined'){
 		var v = '';
 	}else{
-		var v = campo.getValue();
+		var v = campo.getValue(true);
 
 		if(v==null) v = '';
 		if((campo.type=='select-one' || campo.type=='checkbox') && v==0 && !campo.getAttribute('data-0-is-value')) v = '';
