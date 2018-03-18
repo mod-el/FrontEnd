@@ -537,7 +537,7 @@ function afterMutation(func){
 	});
 }
 
-window.addEventListener('load', function(){
+window.addEventListener('DOMContentLoaded', function(){
 	if (typeof MutationObserver !== 'undefined') {
 		var observer = new MutationObserver(function (mutations) {
 			var lastPromise = Promise.all([]);
