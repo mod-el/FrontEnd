@@ -313,83 +313,6 @@ function pre_imageLoad(){
  */
 
 /**********************************************************************/
-/* FUNZIONI PER CONTROLLARE IN TEMPO REALE LA COMPILAZIONE DI UN FORM */
-
-function checkCampo(campo, mancanti, colora){
-	if(typeof campo!='object' || campo===null){
-		console.log('ZKLIBS Warning: impossibile trovare un elemento passato. (checkCampo - '+campo+')');
-		return true;
-	}
-
-	if(typeof colora=='undefined') colora = true;
-
-	if(typeof campo=='undefined'){
-		var v = '';
-	}else{
-		var v = campo.getValue(true);
-
-		if(v==null) v = '';
-		if((campo.type=='select-one' || campo.type=='checkbox') && v==0 && !campo.getAttribute('data-0-is-value')) v = '';
-	}
-
-	if(v=='' && colora)
-		var outline = 'solid #F00 1px';
-	else
-		var outline = '';
-
-	if(typeof campo!='undefined'){
-		if(typeof campo=='object' && campo[0] && campo[0].type=='radio'){
-			for(var i=0, length=campo.length; i<length; i++)
-				campo[i].style.outline = outline;
-		}else if(campo.type=='hidden' && campo.getAttribute('data-zkra')){
-			var temp = ricerca_assistita_findMainTextInput(campo.getAttribute('data-zkra'));
-			if(temp){
-				campo = temp;
-				campo.style.outline = outline;
-			}
-		}else
-			campo.style.outline = outline;
-	}
-
-	if(v==''){
-		console.log('Manca '+campo.name+'.');
-		if(!mancanti && typeof campo.focus!='undefined')
-			campo.focus();
-		mancanti.push(campo.name);
-	}
-	return mancanti;
-}
-
-function checkForm(form, obb){
-	var mancanti = [];
-	for(var n in obb){
-		if(typeof obb[n]=='object'){
-			var almeno_uno = false;
-			for(var nn in obb[n]){
-				var campo = form[obb[n][nn]];
-				if(!checkCampo(campo, false, false))
-					almeno_uno = true;
-			}
-			if(!almeno_uno){
-				mancanti.push(n);
-				for(var nn in obb[n])
-					form[obb[n][nn]].style.outline = 'solid #F00 1px';
-			}else{
-				for(var nn in obb[n])
-					form[obb[n][nn]].style.outline = '';
-			}
-		}else{
-			var campo = form[obb[n]];
-			mancanti = checkCampo(campo, mancanti);
-		}
-	}
-	if(mancanti.length>0){
-		alert("Non hai compilato dei campi obbligatori!\n"+mancanti.join("\n"));
-		return false;
-	}else{
-		return true;
-	}
-}
 
 function splitScripts(text) {
 	var scripts = '';
@@ -404,40 +327,6 @@ Element.prototype.jsFill = function(text){
 	var split = splitScripts(text);
 	this.innerHTML = split.html;
 	eval(split.js);
-}
-
-function simulateTab(current, forward){ // forward = true se voglio andare avanti, false se voglio andare indietro
-	if(typeof current.form=='undefined' || !current.form)
-		return false;
-	if(typeof forward=='undefined')
-		forward = true;
-
-	var next = false;
-	if(forward){
-		var start = 0;
-		var end = current.form.elements.length;
-		var step = 1;
-	}else{
-		var start = current.form.elements.length;
-		var end = 0;
-		var step = -1;
-	}
-	for(i = start; i*step < end*step; i += step){
-		if(next && !current.form.elements[i].readOnly && !current.form.elements[i].disabled && !in_array(current.form.elements[i].type, ['hidden'])){
-			current.form.elements[i].focus();
-			if (current.form.elements[i].type == "text" || current.form.elements[i].type == "number"){
-				current.form.elements[i].select();
-			}
-			return true;
-		}
-		if(current.form.elements[i] == current)
-			next = true;
-	}
-	return false;
-}
-
-function nextField(current){ // Retrocompatibilit�
-	return simulateTab(current, true);
 }
 
 function array_merge(obj1, obj2){
