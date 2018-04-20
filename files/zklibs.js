@@ -58,7 +58,7 @@ function queryStringFromObject(obj){
 Element.prototype.ajax = function(url, get, post, options){
 	return ajax(url, get, post, options).then((function(el){
 		return function(r){
-			el.innerHTML = r;
+			el.jsFill(r);
 			return r;
 		};
 	})(this));
