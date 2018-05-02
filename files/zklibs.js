@@ -1,7 +1,7 @@
 /******************************************************************/
 /***************** AJAX FUNCTIONS *****************/
 
-function ajax(url, get, post, options){
+function ajax(url, get, post, options) {
 	options = array_merge({
 		'additional': [],
 		'bind': true,
@@ -9,62 +9,62 @@ function ajax(url, get, post, options){
 		'onprogress': null
 	}, options);
 
-	if(typeof get==='undefined')
+	if (typeof get === 'undefined')
 		get = '';
-	if(typeof post==='undefined')
+	if (typeof post === 'undefined')
 		post = null;
 
-	if(typeof get==='object')
+	if (typeof get === 'object')
 		get = queryStringFromObject(get);
-	if(typeof post==='object')
+	if (typeof post === 'object')
 		post = queryStringFromObject(post);
 
-	if(window.fetch && options['onprogress']===null){
+	if (window.fetch && options['onprogress'] === null) {
 		var options = {
 			credentials: 'include'
 		};
-		if(post){
+		if (post) {
 			options['method'] = 'POST';
 			options['body'] = post;
-			options['headers'] = {'Content-Type' : 'application/x-www-form-urlencoded'};
+			options['headers'] = {'Content-Type': 'application/x-www-form-urlencoded'};
 		}
 
-		return fetch(url+'?'+get, options).then(function(response){
-			if(options['fullResponse'])
+		return fetch(url + '?' + get, options).then(function (response) {
+			if (options['fullResponse'])
 				return response;
 			else
 				return response.text();
-		}).then(function(text){
-			if(!options['fullResponse'])
+		}).then(function (text) {
+			if (!options['fullResponse'])
 				text = handleAjaxResponse(text);
 
 			return text;
 		});
-	}else{
-		return new Promise(function(resolve){
+	} else {
+		return new Promise(function (resolve) {
 			oldAjax(resolve, url, get, post, options['additional'], options['bind'], options['onprogress']);
 		});
 	}
 }
 
-function queryStringFromObject(obj){
+function queryStringFromObject(obj) {
 	var string = [];
-	for(var k in obj){
-		string.push(k+'='+encodeURIComponent(obj[k]));
+	for (var k in obj) {
+		string.push(k + '=' + encodeURIComponent(obj[k]));
 	}
 	return string.join('&');
 }
 
-Element.prototype.ajax = function(url, get, post, options){
-	return ajax(url, get, post, options).then((function(el){
-		return function(r){
+Element.prototype.ajax = function (url, get, post, options) {
+	return ajax(url, get, post, options).then((function (el) {
+		return function (r) {
 			el.jsFill(r);
 			return r;
 		};
 	})(this));
 };
 
-function getElementBindingsForAjax(){
+function getElementBindingsForAjax() {
 	var bindings = {
 		'elements': {},
 		'fields': [],
@@ -72,13 +72,13 @@ function getElementBindingsForAjax(){
 	};
 
 	var elements = document.querySelectorAll('[data-bind-element]');
-	for(var i in elements){
-		if(!elements.hasOwnProperty(i)) continue;
+	for (var i in elements) {
+		if (!elements.hasOwnProperty(i)) continue;
 		var n = elements[i].getAttribute('data-bind-element').split('-');
-		if(n.length==1) continue;
+		if (n.length == 1) continue;
 
-		var k = 'element-'+n[0]+'-'+n[1];
-		if(typeof bindings['elements'][k]=='undefined'){
+		var k = 'element-' + n[0] + '-' + n[1];
+		if (typeof bindings['elements'][k] == 'undefined') {
 			bindings['elements'][k] = {
 				'type': 'element',
 				'element': n[0],
@@ -87,28 +87,31 @@ function getElementBindingsForAjax(){
 				'methods': []
 			};
 		}
-		if(elements[i].getAttribute('data-bind-field')){
-			if(typeof elements[i].getAttribute('data-bind-admin')){
-				var fk = JSON.stringify({'field': elements[i].getAttribute('data-bind-field'), 'admin': elements[i].getAttribute('data-bind-admin')});
-			}else{
+		if (elements[i].getAttribute('data-bind-field')) {
+			if (typeof elements[i].getAttribute('data-bind-admin')) {
+				var fk = JSON.stringify({
+					'field': elements[i].getAttribute('data-bind-field'),
+					'admin': elements[i].getAttribute('data-bind-admin')
+				});
+			} else {
 				var fk = elements[i].getAttribute('data-bind-field');
 			}
-			if(!in_array(fk, bindings['elements'][k]['fields']))
+			if (!in_array(fk, bindings['elements'][k]['fields']))
 				bindings['elements'][k]['fields'].push(fk);
-		}else if(elements[i].getAttribute('data-bind-method')){
-			if(!in_array(elements[i].getAttribute('data-bind-method'), bindings['elements'][k]['methods']))
+		} else if (elements[i].getAttribute('data-bind-method')) {
+			if (!in_array(elements[i].getAttribute('data-bind-method'), bindings['elements'][k]['methods']))
 				bindings['elements'][k]['methods'].push(elements[i].getAttribute('data-bind-method'));
 		}
 	}
 
 	var elements = document.querySelectorAll('[data-bind-table]');
-	for(var i in elements){
-		if(!elements.hasOwnProperty(i)) continue;
+	for (var i in elements) {
+		if (!elements.hasOwnProperty(i)) continue;
 		var n = elements[i].getAttribute('data-bind-table').split('-');
-		if(n.length==1) continue;
+		if (n.length == 1) continue;
 
-		var k = 'element-'+n[0]+'-'+n[1];
-		if(typeof bindings['elements'][k]=='undefined'){
+		var k = 'element-' + n[0] + '-' + n[1];
+		if (typeof bindings['elements'][k] == 'undefined') {
 			bindings['elements'][k] = {
 				'type': 'table',
 				'element': n[0],
@@ -118,40 +121,40 @@ function getElementBindingsForAjax(){
 			};
 		}
 
-		if(elements[i].getAttribute('data-bind-field')){
-			if(!in_array(elements[i].getAttribute('data-bind-field'), bindings['elements'][k]['fields']))
+		if (elements[i].getAttribute('data-bind-field')) {
+			if (!in_array(elements[i].getAttribute('data-bind-field'), bindings['elements'][k]['fields']))
 				bindings['elements'][k]['fields'].push(elements[i].getAttribute('data-bind-field'));
 		}
 	}
 
-	for(var k in bindings['elements']){ // Accorpo gli array di metodi e/o campi che si ripetono in un'unico oggetto che fa da cache, per risparmiare lunghezza del post, specie nell'admin
-		if(!bindings['elements'].hasOwnProperty(k)) continue;
+	for (var k in bindings['elements']) { // Accorpo gli array di metodi e/o campi che si ripetono in un'unico oggetto che fa da cache, per risparmiare lunghezza del post, specie nell'admin
+		if (!bindings['elements'].hasOwnProperty(k)) continue;
 
-		if(bindings['elements'][k]['fields'].length>0){
+		if (bindings['elements'][k]['fields'].length > 0) {
 			var idx = false;
-			for(var i in bindings['fields']){
-				if(!bindings['fields'].hasOwnProperty(i)) continue;
-				if(JSON.stringify(bindings['fields'][i])==JSON.stringify(bindings['elements'][k]['fields'])){
+			for (var i in bindings['fields']) {
+				if (!bindings['fields'].hasOwnProperty(i)) continue;
+				if (JSON.stringify(bindings['fields'][i]) == JSON.stringify(bindings['elements'][k]['fields'])) {
 					idx = i;
 					break;
 				}
 			}
-			if(idx===false)
-				idx = bindings['fields'].push(bindings['elements'][k]['fields'])-1;
+			if (idx === false)
+				idx = bindings['fields'].push(bindings['elements'][k]['fields']) - 1;
 
 			bindings['elements'][k]['fields'] = idx;
 		}
-		if(bindings['elements'][k]['methods'].length>0){
+		if (bindings['elements'][k]['methods'].length > 0) {
 			var idx = false;
-			for(var i in bindings['methods']){
-				if(!bindings['methods'].hasOwnProperty(i)) continue;
-				if(JSON.stringify(bindings['methods'][i])==JSON.stringify(bindings['elements'][k]['methods'])){
+			for (var i in bindings['methods']) {
+				if (!bindings['methods'].hasOwnProperty(i)) continue;
+				if (JSON.stringify(bindings['methods'][i]) == JSON.stringify(bindings['elements'][k]['methods'])) {
 					idx = parseInt(i);
 					break;
 				}
 			}
-			if(idx===false)
-				idx = bindings['methods'].push(bindings['elements'][k]['methods'])-1;
+			if (idx === false)
+				idx = bindings['methods'].push(bindings['elements'][k]['methods']) - 1;
 
 			bindings['elements'][k]['methods'] = idx;
 		}
@@ -162,53 +165,53 @@ function getElementBindingsForAjax(){
 
 /******************************************************************/
 
-function getMouseCoords(event){ // Funzione che ricava le coordinate in pixel del cursore nella pagina
+function getMouseCoords(event) { // Funzione che ricava le coordinate in pixel del cursore nella pagina
 	if (!event) var event = window.event;
-	if(typeof event.touches!='undefined')
-		return {'x':event.touches.item(0).clientX,'y':event.touches.item(0).clientY};
-	if(document.all){
+	if (typeof event.touches != 'undefined')
+		return {'x': event.touches.item(0).clientX, 'y': event.touches.item(0).clientY};
+	if (document.all) {
 		tempX = event.clientX + document.documentElement.scrollLeft;
 		tempY = event.clientY + document.documentElement.scrollTop;
-	}else{
+	} else {
 		tempX = event.pageX;
 		tempY = event.pageY;
 	}
-	if (tempX<0) tempX = 0;
-	if (tempY<0) tempY = 0;
-	return {'x':tempX,'y':tempY};
+	if (tempX < 0) tempX = 0;
+	if (tempY < 0) tempY = 0;
+	return {'x': tempX, 'y': tempY};
 }
 
-function getElementCoords(id){ // Funzione che ricava la posizione assoluta di un elemento all'interno della pagina
-	if(typeof id=='object') var element = id;
+function getElementCoords(id) { // Funzione che ricava la posizione assoluta di un elemento all'interno della pagina
+	if (typeof id == 'object') var element = id;
 	else var element = _(id);
-	if(!element) return false;
-	var elementCoords = {'x':0,'y':0};
-	do{
+	if (!element) return false;
+	var elementCoords = {'x': 0, 'y': 0};
+	do {
 		elementCoords['x'] += element.offsetLeft;
 		elementCoords['y'] += element.offsetTop;
 		element = element.offsetParent;
-	}while(element);
+	} while (element);
 	return elementCoords;
 }
 
-function getMouseCoordsInElement(e, element){
+function getMouseCoordsInElement(e, element) {
 	var c = getMouseCoords(e);
 	var c_e = getElementCoords(element);
-	return {'x':c.x-c_e.x, 'y':c.y-c_e.y};
+	return {'x': c.x - c_e.x, 'y': c.y - c_e.y};
 }
 
-function makePrice(n, show_currency, decimals){ // Formatto un prezzo
-	if(typeof show_currency=='undefined') show_currency = true;
-	if(typeof decimals=='undefined') decimals = 2;
+function makePrice(n, show_currency, decimals) { // Formatto un prezzo
+	if (typeof show_currency == 'undefined') show_currency = true;
+	if (typeof decimals == 'undefined') decimals = 2;
 
 	var r = n.toFixed(decimals);
-	if(show_currency) r += '&euro;';
+	if (show_currency) r += '&euro;';
 	return r;
 }
 
-function in_array(needle, haystack, argStrict){ // Uguale all'"in_array" del PHP
+function in_array(needle, haystack, argStrict) { // Uguale all'"in_array" del PHP
 	var key = '',
-		strict = !! argStrict;
+		strict = !!argStrict;
 
 	if (strict) {
 		for (key in haystack) {
@@ -227,7 +230,7 @@ function in_array(needle, haystack, argStrict){ // Uguale all'"in_array" del PHP
 	return false;
 }
 
-asort = function(obj, type, rev, caseSensitive){ // Uguale all'"asort" del PHP
+asort = function (obj, type, rev, caseSensitive) { // Uguale all'"asort" del PHP
 	var temp_array = [];
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
@@ -240,7 +243,7 @@ asort = function(obj, type, rev, caseSensitive){ // Uguale all'"asort" del PHP
 	if (typeof type === 'function') {
 		temp_array.sort(type);
 	} else if (type === 'value') {
-		temp_array.sort(function(a,b) {
+		temp_array.sort(function (a, b) {
 			var x = obj[a];
 			var y = obj[b];
 			if (!caseSensitive) {
@@ -252,21 +255,22 @@ asort = function(obj, type, rev, caseSensitive){ // Uguale all'"asort" del PHP
 	} else {
 		temp_array.sort();
 	}
-	if(typeof rev!='undefined' && rev) temp_array.reverse();
+	if (typeof rev != 'undefined' && rev) temp_array.reverse();
 	var temp_obj = {};
-	for (var i=0; i<temp_array.length; i++){
+	for (var i = 0; i < temp_array.length; i++) {
 		temp_obj[temp_array[i]] = obj[temp_array[i]];
 	}
 	return temp_obj;
 };
 
 var cache_isDateSupported = null;
-function isDateSupported(){
-	if(cache_isDateSupported!==null)
+
+function isDateSupported() {
+	if (cache_isDateSupported !== null)
 		return cache_isDateSupported;
 
 	var input = document.createElement('input');
-	input.setAttribute('type','date');
+	input.setAttribute('type', 'date');
 
 	var notADateValue = 'not-a-date';
 	input.setAttribute('value', notADateValue);
@@ -278,28 +282,28 @@ function isDateSupported(){
 /******************************************************************/
 /************ FUNZIONI PER IL PRELOAD DELLE IMMAGINI *************/
 
-function pre_addImageSet(path, n, s, ext){ // Funzione utile ad accorciare l'aggiunta di url di immagini
-	if(typeof s=='undefined') s = 1;
-	if(typeof ext=='undefined') ext = 'png';
-	for(c=s;c<=n;c++)
-		pre_imagesPaths.push(path+c+'.'+ext);
+function pre_addImageSet(path, n, s, ext) { // Funzione utile ad accorciare l'aggiunta di url di immagini
+	if (typeof s == 'undefined') s = 1;
+	if (typeof ext == 'undefined') ext = 'png';
+	for (c = s; c <= n; c++)
+		pre_imagesPaths.push(path + c + '.' + ext);
 }
 
 var pre_imagesPaths = [], pre_imageSet = {}, pre_imagesInLoading = 0, pre_nextImgN = 0; // Numero di immagini contemporaneamente in caricamento
-function pre_imageLoad(){
-	if(typeof pre_imagesPaths[pre_nextImgN]=='undefined') return false;
-	if(pre_imagesInLoading==6) return false;
+function pre_imageLoad() {
+	if (typeof pre_imagesPaths[pre_nextImgN] == 'undefined') return false;
+	if (pre_imagesInLoading == 6) return false;
 	var path = pre_imagesPaths[pre_nextImgN];
 	pre_imagesInLoading++;
 	pre_nextImgN++;
 
 	pre_imageSet[path] = new Image();
-	pre_imageSet[path].onload = function(){
+	pre_imageSet[path].onload = function () {
 		pre_imagesInLoading--;
-		if(typeof pre_imagesPaths[pre_nextImgN]!='undefined') pre_imageLoad();
+		if (typeof pre_imagesPaths[pre_nextImgN] != 'undefined') pre_imageLoad();
 	}
 	pre_imageSet[path].src = path;
-	if(pre_imagesInLoading<6) pre_imageLoad();
+	if (pre_imagesInLoading < 6) pre_imageLoad();
 }
 
 /* ############ FAC SIMILE ###########
@@ -316,71 +320,75 @@ function pre_imageLoad(){
 
 function splitScripts(text) {
 	var scripts = '';
-	var cleaned = text.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function(){
+	var cleaned = text.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function () {
 		scripts += arguments[1] + '\n';
 		return '';
 	});
-	return {'html':cleaned, 'js':scripts};
+	return {'html': cleaned, 'js': scripts};
 }
 
-Element.prototype.jsFill = function(text){
+Element.prototype.jsFill = function (text) {
 	var split = splitScripts(text);
 	this.innerHTML = split.html;
 	eval(split.js);
 }
 
-function array_merge(obj1, obj2){
+function array_merge(obj1, obj2) {
 	var obj3 = {};
-	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-	for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+	for (var attrname in obj1) {
+		obj3[attrname] = obj1[attrname];
+	}
+	for (var attrname in obj2) {
+		obj3[attrname] = obj2[attrname];
+	}
 	return obj3;
 }
 
-function _(id){
-	if(typeof id=='object')
+function _(id) {
+	if (typeof id == 'object')
 		return false;
 
 	var el = document.getElementById(id);
-	if(el)
+	if (el)
 		return el;
 	el = document.querySelector(id);
-	if(el)
+	if (el)
 		return el;
 	return false;
 }
 
-Element.prototype.hasClass = function(name){
+Element.prototype.hasClass = function (name) {
 	return new RegExp('(\\s|^)' + name + '(\\s|$)').test(this.className);
 }
 
-Element.prototype.removeClass = function(name){
+Element.prototype.removeClass = function (name) {
 	var classi = this.className.split(' ');
 	var nuove = [];
-	for(var i in classi){
-		if(classi[i]!=name)
+	for (var i in classi) {
+		if (classi[i] != name)
 			nuove.push(classi[i]);
 	}
 	this.className = nuove.join(' ');
 }
 
-Element.prototype.addClass = function(name){
+Element.prototype.addClass = function (name) {
 	var classi = this.className.split(' ');
-	for(var i in classi){
-		if(classi[i]==name) return;
+	for (var i in classi) {
+		if (classi[i] == name) return;
 	}
-	this.className = this.className+' '+name;
+	this.className = this.className + ' ' + name;
 }
 
-Element.prototype.loading = function(){
-	this.innerHTML = '<img src="'+base_path+'model/Output/files/loading.gif" alt="" class="loading-gif" />';
+Element.prototype.loading = function () {
+	this.innerHTML = '<img src="' + base_path + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 	return this;
 }
 
-function setCookie(name,value,days) {
+function setCookie(name, value, days) {
 	var expires = "";
 	if (days) {
 		var date = new Date();
-		date.setTime(date.getTime() + (days*24*60*60*1000));
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
 		expires = "; expires=" + date.toUTCString();
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
@@ -389,24 +397,25 @@ function setCookie(name,value,days) {
 function getCookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
+	for (var i = 0; i < ca.length; i++) {
 		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
 	}
 	return null;
 }
 
 function deleteCookie(name) {
-	setCookie(name,"",-1);
+	setCookie(name, "", -1);
 }
 
 var observingMutations = {};
-function observeMutations(func, priority){
-	if(typeof priority==='undefined')
+
+function observeMutations(func, priority) {
+	if (typeof priority === 'undefined')
 		priority = 0;
 
-	if(typeof observingMutations[priority]==='undefined')
+	if (typeof observingMutations[priority] === 'undefined')
 		observingMutations[priority] = [];
 
 	observingMutations[priority].push(func);
@@ -415,10 +424,11 @@ function observeMutations(func, priority){
 }
 
 var afterMutationArr = [];
-function afterMutation(func){
-	return new Promise(function(resolve){
-		afterMutationArr.push((function(resolve, func){
-			return function(){
+
+function afterMutation(func) {
+	return new Promise(function (resolve) {
+		afterMutationArr.push((function (resolve, func) {
+			return function () {
 				func.call(window);
 				resolve();
 			};
@@ -426,7 +436,7 @@ function afterMutation(func){
 	});
 }
 
-window.addEventListener('DOMContentLoaded', function(){
+window.addEventListener('DOMContentLoaded', function () {
 	if (typeof MutationObserver !== 'undefined') {
 		var observer = new MutationObserver(function (mutations) {
 			var lastPromise = Promise.all([]);
@@ -442,10 +452,10 @@ window.addEventListener('DOMContentLoaded', function(){
 					return Promise.all(promises);
 				});
 			});
-			afterMutationArr.forEach(function(afterMutationFunc){
+			afterMutationArr.forEach(function (afterMutationFunc) {
 				lastPromise = lastPromise.then(afterMutationFunc);
 			});
-			lastPromise.then(function(){
+			lastPromise.then(function () {
 				afterMutationArr = [];
 			});
 		});
@@ -458,23 +468,23 @@ window.addEventListener('DOMContentLoaded', function(){
 var infoDebugJSON = [];
 var myRequest = new Array();
 
-function CreateXmlHttpReq(n, handler, campi_addizionali){
+function CreateXmlHttpReq(n, handler, campi_addizionali) {
 	var xmlhttp = false;
-	try{
+	try {
 		xmlhttp = new XMLHttpRequest();
-	}catch(e){
-		try{
+	} catch (e) {
+		try {
 			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		}catch(e){
+		} catch (e) {
 			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 		}
 	}
-	xmlhttp.onreadystatechange = function(){
-		if (myRequest[n].readyState==4){
-			if(handler!=false){
+	xmlhttp.onreadystatechange = function () {
+		if (myRequest[n].readyState == 4) {
+			if (handler != false) {
 				var r = handleAjaxResponse(myRequest[n].responseText);
 
-				if(myRequest[n].status===200) handler.call(myRequest[n], r, campi_addizionali);
+				if (myRequest[n].status === 200) handler.call(myRequest[n], r, campi_addizionali);
 				else handler.call(myRequest[n], false, campi_addizionali);
 			}
 			delete myRequest[n];
@@ -483,86 +493,86 @@ function CreateXmlHttpReq(n, handler, campi_addizionali){
 	return xmlhttp;
 }
 
-function oldAjax(handler, indirizzo, parametri_get, parametri_post, campi_addizionali, bindings, onprogress){
-	if(typeof campi_addizionali==='undefined' || campi_addizionali==='')
+function oldAjax(handler, indirizzo, parametri_get, parametri_post, campi_addizionali, bindings, onprogress) {
+	if (typeof campi_addizionali === 'undefined' || campi_addizionali === '')
 		campi_addizionali = [];
 
 	var r = Math.random();
-	n = 0; while(myRequest[n]) n++;
+	n = 0;
+	while (myRequest[n]) n++;
 	myRequest[n] = CreateXmlHttpReq(n, handler, campi_addizionali);
-	myRequest[n].open('POST', indirizzo+'?zkrand='+r+'&'+parametri_get);
+	myRequest[n].open('POST', indirizzo + '?zkrand=' + r + '&' + parametri_get);
 	myRequest[n].setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-	if(onprogress){
-		myRequest[n].onprogress = onprogress;
-	}
+	if (onprogress)
+		myRequest[n].upload.addEventListener('progress', onprogress);
 
-	if(typeof parametri_post=='undefined')
+	if (typeof parametri_post === 'undefined')
 		parametri_post = '';
-	if(parametri_post!='')
+	if (parametri_post != '')
 		parametri_post += '&';
 
-	if(typeof bindings=='undefined')
+	if (typeof bindings === 'undefined')
 		bindings = true;
 
-	if(bindings)
-		parametri_post += 'zkbindings='+encodeURIComponent(JSON.stringify(getElementBindingsForAjax()));
+	if (bindings)
+		parametri_post += 'zkbindings=' + encodeURIComponent(JSON.stringify(getElementBindingsForAjax()));
 
 	myRequest[n].send(parametri_post);
 
 	return n;
 }
 
-function ajaxAbort(n){
-	if(typeof n=='undefined'){
-		for(var i in myRequest){
-			if(typeof myRequest[i]=='object')
+function ajaxAbort(n) {
+	if (typeof n == 'undefined') {
+		for (var i in myRequest) {
+			if (typeof myRequest[i] == 'object')
 				myRequest[i].abort();
 		}
-	}else{
-		if(typeof myRequest[n]=='object')
+	} else {
+		if (typeof myRequest[n] == 'object')
 			myRequest[n].abort();
 	}
 }
 
-function handleAjaxResponse(text){
-	try{
+function handleAjaxResponse(text) {
+	try {
 		var r = JSON.parse(text);
 
-		if(typeof r.ZKDEBUG!='undefined'){
+		if (typeof r.ZKDEBUG != 'undefined') {
 			infoDebugJSON.push(r.ZKDEBUG);
 		}
-		if(typeof r.ZKBINDINGS!='undefined'){
-			for(var i in r.ZKBINDINGS){
-				if(!r.ZKBINDINGS.hasOwnProperty(i)) continue;
+		if (typeof r.ZKBINDINGS != 'undefined') {
+			for (var i in r.ZKBINDINGS) {
+				if (!r.ZKBINDINGS.hasOwnProperty(i)) continue;
 				var b = r.ZKBINDINGS[i];
-				switch(b['type']){
+				switch (b['type']) {
 					case 'element':
-						if(typeof b['field']!='undefined'){
-							var elements = document.querySelectorAll('[data-bind-element="'+b['element']+'-'+b['id']+'"][data-bind-field="'+b['field']+'"]');
-						}else if(typeof b['method']!='undefined'){
-							var elements = document.querySelectorAll('[data-bind-element="'+b['element']+'-'+b['id']+'"][data-bind-method="'+b['method']+'"]');
+						if (typeof b['field'] != 'undefined') {
+							var elements = document.querySelectorAll('[data-bind-element="' + b['element'] + '-' + b['id'] + '"][data-bind-field="' + b['field'] + '"]');
+						} else if (typeof b['method'] != 'undefined') {
+							var elements = document.querySelectorAll('[data-bind-element="' + b['element'] + '-' + b['id'] + '"][data-bind-method="' + b['method'] + '"]');
 						}
 						break;
 					case 'table':
-						var elements = document.querySelectorAll('[data-bind-table="'+b['table']+'-'+b['id']+'"][data-bind-field="'+b['field']+'"]');
+						var elements = document.querySelectorAll('[data-bind-table="' + b['table'] + '-' + b['id'] + '"][data-bind-field="' + b['field'] + '"]');
 						break;
 				}
-				for(var il in elements){
-					if(!elements.hasOwnProperty(il)) continue;
+				for (var il in elements) {
+					if (!elements.hasOwnProperty(il)) continue;
 					var elemType = elements[il].nodeName.toLowerCase();
-					if(elemType=='input' || elemType=='textarea' || elemType=='select' || elemType=='radio'){
+					if (elemType == 'input' || elemType == 'textarea' || elemType == 'select' || elemType == 'radio') {
 						elements[il].setValue(b['v'], false);
-					}else{
+					} else {
 						elements[il].innerHTML = b['v'];
 					}
 				}
 			}
 		}
-		if(typeof r.ZKDATA!='undefined'){
+		if (typeof r.ZKDATA != 'undefined') {
 			r = r.ZKDATA;
 		}
-	}catch(e){
+	} catch (e) {
 		var r = text;
 	}
 
