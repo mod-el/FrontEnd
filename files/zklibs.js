@@ -61,7 +61,11 @@ Element.prototype.ajax = function (url, get, post, options) {
 			el.jsFill(r);
 			return r;
 		};
-	})(this));
+	})(this)).then(function (r) {
+		return changedHtml().then(function () {
+			return r;
+		});
+	});
 };
 
 function getElementBindingsForAjax() {
@@ -409,59 +413,20 @@ function deleteCookie(name) {
 	setCookie(name, "", -1);
 }
 
-var observingMutations = {};
+var changedHtmlCallbacks = [];
 
-function observeMutations(func, priority) {
-	if (typeof priority === 'undefined')
-		priority = 0;
-
-	if (typeof observingMutations[priority] === 'undefined')
-		observingMutations[priority] = [];
-
-	observingMutations[priority].push(func);
-
-	func.call(window);
+function onHtmlChange(func) {
+	changedHtmlCallbacks.push(func);
+	return func.call(window);
 }
 
-var afterMutationArr = [];
-
-function afterMutation(func) {
-	return new Promise(function (resolve) {
-		afterMutationArr.push((function (resolve, func) {
-			return function () {
-				func.call(window);
-				resolve();
-			};
-		})(resolve, func));
+function changedHtml() {
+	var promises = [];
+	changedHtmlCallbacks.forEach(function (func) {
+		promises.push(func.call(window));
 	});
+	return Promise.all(promises);
 }
-
-window.addEventListener('DOMContentLoaded', function () {
-	if (typeof MutationObserver !== 'undefined') {
-		var observer = new MutationObserver(function (mutations) {
-			var lastPromise = Promise.all([]);
-			var keys = Object.keys(observingMutations);
-			keys.sort().forEach(function (k) {
-				var promises = [];
-				observingMutations[k].forEach(function (func) {
-					promises.push(new Promise(function (resolve) {
-						func.call(window).then(resolve);
-					}));
-				});
-				lastPromise = lastPromise.then(function () {
-					return Promise.all(promises);
-				});
-			});
-			afterMutationArr.forEach(function (afterMutationFunc) {
-				lastPromise = lastPromise.then(afterMutationFunc);
-			});
-			lastPromise.then(function () {
-				afterMutationArr = [];
-			});
-		});
-		observer.observe(document.body, {"childList": true, "subtree": true});
-	}
-});
 
 /**************************** BACKWARD COMPATIBILITY **************************/
 
