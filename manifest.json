@@ -9,7 +9,8 @@
 		"files/grid.css"
 	],
 	"js": [
-		"files/zklibs.js",
-		"files/fetch.js"
+		"files/promise.js",
+		"files/fetch.js",
+		"files/zklibs.js"
 	]
 }
