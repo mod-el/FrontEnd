@@ -11,7 +11,7 @@
 	"js": [
 		"files/promise.js",
 		"files/fetch.js",
-		"files/array-from.js",
+		"files/polyfills.js",
 		"files/zklibs.js"
 	]
 }
