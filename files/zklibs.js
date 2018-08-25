@@ -324,7 +324,7 @@ function pre_imageLoad() {
 
 function splitScripts(text) {
 	var scripts = '';
-	var cleaned = text.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function () {
+	var cleaned = text.toString().replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function () {
 		scripts += arguments[1] + '\n';
 		return '';
 	});
