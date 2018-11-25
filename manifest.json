@@ -1,9 +1,9 @@
 {
 	"name": "FrontEnd",
 	"description": "Basic CSS and JavaScript libraries",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"dependencies": {
-		"Output": ">=0.2.0"
+		"Output": ">=0.3.0"
 	},
 	"css": [
 		"files/grid.css"
