@@ -6,13 +6,14 @@ function ajax(url, get, post, options) {
 		'additional': [],
 		'bind': true,
 		'fullResponse': false,
-		'onprogress': null
+		'onprogress': null,
+		'method': null
 	}, options);
 
 	if (typeof get === 'undefined')
 		get = '';
 	if (typeof post === 'undefined')
-		post = null;
+		post = '';
 
 	if (typeof get === 'object')
 		get = queryStringFromObject(get);
@@ -24,7 +25,8 @@ function ajax(url, get, post, options) {
 			credentials: 'include'
 		};
 		if (post) {
-			options['method'] = 'POST';
+			if (options['method'] === null)
+				options['method'] = 'POST';
 			options['body'] = post;
 			options['headers'] = {'Content-Type': 'application/x-www-form-urlencoded'};
 		}
