@@ -7,7 +7,8 @@ function ajax(url, get, post, options) {
 		'bind': true,
 		'fullResponse': false,
 		'onprogress': null,
-		'method': null
+		'method': null,
+		'headers': {}
 	}, options);
 
 	if (typeof get === 'undefined')
@@ -21,17 +22,22 @@ function ajax(url, get, post, options) {
 		post = queryStringFromObject(post);
 
 	if (window.fetch && options['onprogress'] === null) {
-		var options = {
-			credentials: 'include'
+		var fetchOptions = {
+			'credentials': 'include'
 		};
 		if (post) {
 			if (options['method'] === null)
 				options['method'] = 'POST';
-			options['body'] = post;
-			options['headers'] = {'Content-Type': 'application/x-www-form-urlencoded'};
+
+			fetchOptions['body'] = post;
+			options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
 		}
 
-		return fetch(url + '?' + get, options).then(function (response) {
+		if (options['method'])
+			fetchOptions['method'] = options['method'];
+		fetchOptions['headers'] = options['headers'];
+
+		return fetch(url + '?' + get, fetchOptions).then(function (response) {
 			if (options['fullResponse'])
 				return response;
 			else
