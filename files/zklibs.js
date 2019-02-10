@@ -63,6 +63,17 @@ function queryStringFromObject(obj) {
 	return string.join('&');
 }
 
+function objectFromQueryString(string) {
+	if (typeof string === 'undefined')
+		string = location.search.substring(1);
+	if (string === '')
+		return {};
+
+	return JSON.parse('{"' + string.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
+		return key === "" ? value : decodeURIComponent(value)
+	});
+}
+
 Element.prototype.ajax = function (url, get, post, options) {
 	return ajax(url, get, post, options).then((function (el) {
 		return function (r) {
