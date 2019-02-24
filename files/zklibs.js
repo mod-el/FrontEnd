@@ -8,6 +8,7 @@ function ajax(url, get, post, options) {
 		'fullResponse': false,
 		'onprogress': null,
 		'method': null,
+		'json': false,
 		'headers': {}
 	}, options);
 
@@ -18,8 +19,17 @@ function ajax(url, get, post, options) {
 
 	if (typeof get === 'object')
 		get = queryStringFromObject(get);
-	if (typeof post === 'object')
-		post = queryStringFromObject(post);
+
+	if (typeof post === 'object') {
+		if (options['json']) {
+			if (Object.keys(post).length > 0)
+				post = JSON.stringify(post);
+			else
+				post = null;
+		} else {
+			post = queryStringFromObject(post);
+		}
+	}
 
 	if (window.fetch && options['onprogress'] === null) {
 		var fetchOptions = {
@@ -30,7 +40,10 @@ function ajax(url, get, post, options) {
 				options['method'] = 'POST';
 
 			fetchOptions['body'] = post;
-			options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+			if (options['json'])
+				options['headers']['Content-Type'] = 'application/json';
+			else
+				options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
 		}
 
 		if (options['method'])
