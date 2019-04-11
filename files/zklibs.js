@@ -236,12 +236,15 @@ function getMouseCoordsInElement(e, element) {
 	return {'x': c.x - c_e.x, 'y': c.y - c_e.y};
 }
 
-function makePrice(n, show_currency, decimals) { // Formatto un prezzo
-	if (typeof show_currency == 'undefined') show_currency = true;
-	if (typeof decimals == 'undefined') decimals = 2;
+function makePrice(n, show_currency, decimals) {
+	if (typeof show_currency === 'undefined')
+		show_currency = true;
+	if (typeof decimals === 'undefined')
+		decimals = 2;
 
-	var r = n.toFixed(decimals);
-	if (show_currency) r += '&euro;';
+	var r = n.toFixed(decimals).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	if (show_currency)
+		r += '&euro;';
 	return r;
 }
 
