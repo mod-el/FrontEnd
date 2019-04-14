@@ -82,9 +82,14 @@ function objectFromQueryString(string) {
 	if (string === '')
 		return {};
 
-	return JSON.parse('{"' + string.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
-		return key === "" ? value : decodeURIComponent(value)
-	});
+	return string.split('&').reduce(function (prev, curr, i, arr) {
+		var p = curr.split('=');
+		if (p.length === 1)
+			prev[decodeURIComponent(p[0])] = '';
+		else
+			prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+		return prev;
+	}, {});
 }
 
 Element.prototype.ajax = function (url, get, post, options) {
