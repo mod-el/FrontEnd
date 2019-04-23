@@ -241,14 +241,27 @@ function getMouseCoordsInElement(e, element) {
 	return {'x': c.x - c_e.x, 'y': c.y - c_e.y};
 }
 
-function makePrice(n, show_currency, decimals) {
-	if (typeof show_currency === 'undefined')
-		show_currency = true;
-	if (typeof decimals === 'undefined')
-		decimals = 2;
+function makePrice(n, options, decimals) {
+	if (typeof options === 'undefined') {
+		options = {
+			'show_currency': true,
+			'decimal_separator': ',',
+			'thousands_separator': '.',
+			'decimals': 2
+		};
+	} else if (typeof options !== 'object') { // Backward compatibility
+		options = {
+			'show_currency': options,
+			'decimal_separator': ',',
+			'thousands_separator': '.',
+			'decimals': 2
+		};
+	}
+	if (typeof decimals !== 'undefined') // Backward compatibility
+		options['decimals'] = decimals;
 
-	var r = n.toFixed(decimals).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	if (show_currency)
+	var r = n.toFixed(options['decimals']).toString().replace('.', options['decimal_separator']).replace(/\B(?=(\d{3})+(?!\d))/g, options['thousands_separator']);
+	if (options['show_currency'])
 		r += '&euro;';
 	return r;
 }
