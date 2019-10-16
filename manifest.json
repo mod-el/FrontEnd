@@ -3,15 +3,6 @@
 	"description": "Basic CSS and JavaScript libraries",
 	"version": "1.2.2",
 	"dependencies": {
-		"Output": ">=0.3.0"
-	},
-	"css": [
-		"files/grid.css"
-	],
-	"js": [
-		"files/promise.js",
-		"files/fetch.js",
-		"files/polyfills.js",
-		"files/zklibs.js"
-	]
+		"Output": ">=0.3.4"
+	}
 }
