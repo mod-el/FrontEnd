@@ -449,7 +449,7 @@ function setCookie(name, value, days, path) {
 		expires = "; expires=" + date.toUTCString();
 	}
 	if (typeof path === 'undefined')
-		path = PATH;
+		path = PATHBASE;
 	document.cookie = name + "=" + value + expires + "; path=" + path;
 }
 
