@@ -437,7 +437,7 @@ Element.prototype.addClass = function (name) {
 }
 
 Element.prototype.loading = function () {
-	this.innerHTML = '<img src="' + base_path + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
+	this.innerHTML = '<img src="' + PATHBASE + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 	return this;
 }
 
@@ -449,7 +449,7 @@ function setCookie(name, value, days, path) {
 		expires = "; expires=" + date.toUTCString();
 	}
 	if (typeof path === 'undefined')
-		path = absolute_path;
+		path = PATH;
 	document.cookie = name + "=" + value + expires + "; path=" + path;
 }
 
