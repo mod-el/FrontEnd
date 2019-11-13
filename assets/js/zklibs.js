@@ -416,7 +416,7 @@ function _(id) {
 
 Element.prototype.hasClass = function (name) {
 	return new RegExp('(\\s|^)' + name + '(\\s|$)').test(this.className);
-}
+};
 
 Element.prototype.removeClass = function (name) {
 	var classi = this.className.split(' ');
@@ -426,7 +426,7 @@ Element.prototype.removeClass = function (name) {
 			nuove.push(classi[i]);
 	}
 	this.className = nuove.join(' ');
-}
+};
 
 Element.prototype.addClass = function (name) {
 	var classi = this.className.split(' ');
@@ -434,12 +434,19 @@ Element.prototype.addClass = function (name) {
 		if (classi[i] == name) return;
 	}
 	this.className = this.className + ' ' + name;
-}
+};
+
+Element.prototype.toggleClass = function (name) {
+	if(this.hasClass(name))
+		this.removeClass(name);
+	else
+		this.addClass(name);
+};
 
 Element.prototype.loading = function () {
 	this.innerHTML = '<img src="' + PATHBASE + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 	return this;
-}
+};
 
 function setCookie(name, value, days, path) {
 	var expires = "";
