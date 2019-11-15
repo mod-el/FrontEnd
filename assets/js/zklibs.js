@@ -206,8 +206,9 @@ function getElementBindingsForAjax() {
 
 /******************************************************************/
 
-function getMouseCoords(event) { // Funzione che ricava le coordinate in pixel del cursore nella pagina
-	if (!event) var event = window.event;
+function getMouseCoords(event) { // Cursor coords in page
+	if (!event)
+		event = window.event;
 	if (typeof event.touches != 'undefined')
 		return {'x': event.touches.item(0).clientX, 'y': event.touches.item(0).clientY};
 	if (document.all) {
@@ -222,7 +223,7 @@ function getMouseCoords(event) { // Funzione che ricava le coordinate in pixel d
 	return {'x': tempX, 'y': tempY};
 }
 
-function getElementCoords(id) { // Funzione che ricava la posizione assoluta di un elemento all'interno della pagina
+function getElementCoords(id) { // Absolute position of element in page
 	if (typeof id == 'object') var element = id;
 	else var element = _(id);
 	if (!element) return false;
@@ -240,6 +241,14 @@ function getMouseCoordsInElement(e, element) {
 	var c_e = getElementCoords(element);
 	return {'x': c.x - c_e.x, 'y': c.y - c_e.y};
 }
+
+Element.prototype.getCoords = function () {
+	return getElementCoords(this);
+};
+
+Element.prototype.getMouseCoords = function (e) {
+	return getMouseCoordsInElement(e, this);
+};
 
 function makePrice(n, options, decimals) {
 	if (typeof options === 'undefined') {
