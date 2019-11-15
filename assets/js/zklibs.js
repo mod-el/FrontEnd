@@ -437,10 +437,13 @@ Element.prototype.addClass = function (name) {
 };
 
 Element.prototype.toggleClass = function (name) {
-	if(this.hasClass(name))
+	if (this.hasClass(name)) {
 		this.removeClass(name);
-	else
+		return true;
+	} else {
 		this.addClass(name);
+		return false;
+	}
 };
 
 Element.prototype.loading = function () {
