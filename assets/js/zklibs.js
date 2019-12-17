@@ -87,7 +87,7 @@ function objectFromQueryString(string) {
 		if (p.length === 1)
 			prev[decodeURIComponent(p[0])] = '';
 		else
-			prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+			prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]).replace('+', ' ');
 		return prev;
 	}, {});
 }
