@@ -223,22 +223,26 @@ function getMouseCoords(event) { // Cursor coords in page
 	return {'x': tempX, 'y': tempY};
 }
 
-function getElementCoords(id) { // Absolute position of element in page
-	if (typeof id == 'object') var element = id;
-	else var element = _(id);
-	if (!element) return false;
-	var elementCoords = {'x': 0, 'y': 0};
-	do {
-		elementCoords['x'] += element.offsetLeft;
-		elementCoords['y'] += element.offsetTop;
-		element = element.offsetParent;
-	} while (element);
-	return elementCoords;
+// Absolute position of element in page
+function getElementCoords(id) {
+	let element;
+	if (typeof id === 'object')
+		element = id;
+	else
+		element = _(id);
+	if (!element)
+		return false;
+
+	let rect = element.getBoundingClientRect();
+	return {
+		x: rect.left + window.scrollX,
+		y: rect.top + window.scrollY
+	};
 }
 
 function getMouseCoordsInElement(e, element) {
-	var c = getMouseCoords(e);
-	var c_e = getElementCoords(element);
+	let c = getMouseCoords(e);
+	let c_e = getElementCoords(element);
 	return {'x': c.x - c_e.x, 'y': c.y - c_e.y};
 }
 
