@@ -428,7 +428,7 @@ function _(id) {
 }
 
 Element.prototype.hasClass = function (name) {
-	return new RegExp('(\\s|^)' + name + '(\\s|$)').test(this.className);
+	return new RegExp('(\\s|^)' + escapeRegExp(name) + '(\\s|$)').test(this.className);
 };
 
 Element.prototype.removeClass = function (name) {
@@ -463,6 +463,10 @@ Element.prototype.loading = function () {
 	this.innerHTML = '<img src="' + PATHBASE + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 	return this;
 };
+
+function escapeRegExp(str) {
+	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+}
 
 function setCookie(name, value, days, path) {
 	var expires = "";
