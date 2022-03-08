@@ -273,9 +273,10 @@ function makePrice(n, options, decimals) {
 	if (typeof decimals !== 'undefined') // Backward compatibility
 		options['decimals'] = decimals;
 
-	var r = n.toFixed(options['decimals']).toString().replace('.', options['decimal_separator']).replace(/\B(?=(\d{3})+(?!\d))/g, options['thousands_separator']);
+	let r = parseFloat(n).toFixed(options['decimals']).toString().replace('.', options['decimal_separator']).replace(/\B(?=(\d{3})+(?!\d))/g, options['thousands_separator']);
 	if (options['show_currency'])
 		r += '&euro;';
+
 	return r;
 }
 
