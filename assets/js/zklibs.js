@@ -628,6 +628,9 @@ function handleAjaxResponse(text) {
 }
 
 function entities(str) {
+	if (str === null || str === undefined)
+		str = '';
+
 	return str.toString().replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
 		return '&#' + i.charCodeAt(0) + ';';
 	});
