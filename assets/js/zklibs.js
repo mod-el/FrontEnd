@@ -430,40 +430,47 @@ function _(id) {
 
 Element.prototype.hasClass = function (name) {
 	return new RegExp('(\\s|^)' + escapeRegExp(name) + '(\\s|$)').test(this.className);
-};
+}
 
 Element.prototype.removeClass = function (name) {
-	var classi = this.className.split(' ');
-	var nuove = [];
-	for (var i in classi) {
-		if (classi[i] != name)
-			nuove.push(classi[i]);
+	let existingClasses = this.className.split(' ');
+	let classesToRemove = name.split(' ').map(c => c.trim());
+	let newClasses = [];
+	for (let existingClass of existingClasses) {
+		if (!classesToRemove.includes(existingClass.trim()))
+			newClasses.push(existingClass.trim());
 	}
-	this.className = nuove.join(' ');
-};
+
+	this.className = newClasses.join(' ');
+
+	return this;
+}
 
 Element.prototype.addClass = function (name) {
-	var classi = this.className.split(' ');
-	for (var i in classi) {
-		if (classi[i] == name) return;
+	let existingClasses = this.className.split(' ');
+	for (let classToAdd of name.split(' ')) {
+		if (!existingClasses.includes(classToAdd.trim()))
+			existingClasses.push(classToAdd.trim());
 	}
-	this.className = this.className + ' ' + name;
-};
+
+	this.className = existingClasses.join(' ');
+
+	return this;
+}
 
 Element.prototype.toggleClass = function (name) {
-	if (this.hasClass(name)) {
+	if (this.hasClass(name))
 		this.removeClass(name);
-		return true;
-	} else {
+	else
 		this.addClass(name);
-		return false;
-	}
-};
+
+	return this;
+}
 
 Element.prototype.loading = function () {
 	this.innerHTML = '<img src="' + PATHBASE + 'model/Output/files/loading.gif" alt="" class="loading-gif" />';
 	return this;
-};
+}
 
 function escapeRegExp(str) {
 	return (str + '').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
