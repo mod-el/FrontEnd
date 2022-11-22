@@ -3,13 +3,14 @@
 
 function ajax(url, get, post, options) {
 	options = array_merge({
-		'additional': [],
-		'bind': true,
-		'fullResponse': false,
-		'onprogress': null,
-		'method': null,
-		'json': false,
-		'headers': {}
+		additional: [],
+		bind: true,
+		fullResponse: false,
+		onprogress: null,
+		method: null,
+		json: false,
+		headers: {},
+		include_credentials: true
 	}, options);
 
 	if (typeof get === 'undefined')
@@ -32,9 +33,9 @@ function ajax(url, get, post, options) {
 	}
 
 	if (window.fetch && options['onprogress'] === null) {
-		var fetchOptions = {
-			'credentials': 'include'
-		};
+		let fetchOptions = {};
+		if (options.include_credentials)
+			fetchOptions.credentials = 'include';
 		if (post) {
 			if (options['method'] === null)
 				options['method'] = 'POST';
